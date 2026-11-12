@@ -10,7 +10,7 @@ services:
     build: ./registration-service
     environment:
       - PORT=4001
-      - MONGO_URI=mongodb+srv://<khvannmunirotha_db_user>:qSd8XlXa0V9yCN2e@cluster0.wv4zll8.mongodb.net/
+      - MONGO_URI=mongodb://mongo:27017/studentdb
     depends_on:
       - mongo
 
