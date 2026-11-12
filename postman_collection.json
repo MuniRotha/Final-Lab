@@ -1,0 +1,39 @@
+{
+  "info": {
+    "name": "Student Management System (via API Gateway)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [{ "key": "baseUrl", "value": "http://127.0.0.1:4000" }],
+  "item": [
+    { "name": "Gateway health", "request": { "method": "GET", "url": "{{baseUrl}}/health" } },
+    {
+      "name": "Register student",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/register",
+        "body": { "mode": "raw", "raw": "{\n  \"Student_name\": \"Khvann Munirotha\",\n  \"student_mobile\": \"012345678\",\n  \"student_email\": \"nice@student.edu\",\n  \"student_password\": \"pass1234\"\n}" }
+      }
+    },
+    { "name": "Get all students", "request": { "method": "GET", "url": "{{baseUrl}}/api/students" } },
+    { "name": "Get student by id", "request": { "method": "GET", "url": "{{baseUrl}}/api/students/1" } },
+    {
+      "name": "Update mobile",
+      "request": {
+        "method": "PUT",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/students/1/mobile",
+        "body": { "mode": "raw", "raw": "{\n  \"student_mobile\": \"098765432\"\n}" }
+      }
+    },
+    {
+      "name": "Update password",
+      "request": {
+        "method": "PUT",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{baseUrl}}/api/students/1/password",
+        "body": { "mode": "raw", "raw": "{\n  \"old_password\": \"pass1234\",\n  \"new_password\": \"newpass5678\"\n}" }
+      }
+    }
+  ]
+}

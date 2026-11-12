@@ -1,0 +1,78 @@
+# Pod 1: api-gateway + registration-service (two containers in one pod)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway-registration-deployment
+  labels:
+    app: gateway-registration
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway-registration
+  template:
+    metadata:
+      labels:
+        app: gateway-registration
+    spec:
+      containers:
+        - name: api-gateway
+          image: munirotha/student-api-gateway:v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 4000
+          env:
+            - name: PORT
+              value: "4000"
+            # Same pod = same network namespace, so registration is on localhost
+            - name: REGISTRATION_SERVICE_URL
+              value: "http://localhost:4001"
+            # Different pod, reached through the update-service Service
+            - name: UPDATE_SERVICE_URL
+              value: "http://update-service:4002"
+
+        - name: registration-service
+          image: munirotha/student-registration-service:v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 4001
+          env:
+            - name: PORT
+              value: "4001"
+            - name: MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: MONGO_URI
+---
+# Pod 2: update-service (update student mobile number or password)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: update-deployment
+  labels:
+    app: update-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: update-service
+  template:
+    metadata:
+      labels:
+        app: update-service
+    spec:
+      containers:
+        - name: update-service
+          image: munirotha/student-update-service:v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 4002
+          env:
+            - name: PORT
+              value: "4002"
+            - name: MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: MONGO_URI
